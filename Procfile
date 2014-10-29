@@ -1,1 +1,1 @@
-web: goshorty -port=$PORT
+web: goshorty -port=$PORT -redis_url=$REDISCLOUD_URL
