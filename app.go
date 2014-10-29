@@ -221,15 +221,13 @@ var (
 func main() {
 	var (
 		geoDb       string
-		redisHost   string
-		redisPort   int
+		redisUrl    string
 		redisPrefix string
 		regex       string
 		port        int
 	)
 
-	flag.StringVar(&redisHost, "redis_host", "", "Redis host (leave empty for localhost)")
-	flag.IntVar(&redisPort, "redis_port", 6379, "Redis port")
+	flag.StringVar(&redisUrl, "redis_url", "", "Redis url (leave empty for localhost)")
 	flag.StringVar(&redisPrefix, "redis_prefix", "goshorty:", "Redis prefix to use")
 	flag.StringVar(&settings.RestrictDomain, "domain", "", "Restrict destination URLs to a single domain")
 	flag.StringVar(&settings.Redirect404, "redirect_404", "", "Restrict destination URLs to a single domain")
@@ -247,7 +245,13 @@ func main() {
 	}
 
 	regex = fmt.Sprintf(regex, settings.UrlLength)
-	settings.RedisUrl = fmt.Sprintf("%s:%d", redisHost, redisPort)
+
+  url, err := url.Parse(redisUrl)
+	if err != nil {
+		panic(err)
+	}
+
+  settings.RedisUrl = url.Host
 	settings.RedisPrefix = redisPrefix
 
 	router.HandleFunc("/api/v1/url", ApiAddHandler).Methods("POST").Name("add")
