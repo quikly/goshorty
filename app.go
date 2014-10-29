@@ -251,7 +251,13 @@ func main() {
 		panic(err)
 	}
 
-  settings.RedisUrl = url.Host
+  if url.User != nil {
+    settings.RedisUrl = fmt.Sprintf("%s@%s", url.User, url.Host)
+  } else {
+    settings.RedisUrl = url.Host
+  }
+
+	// settings.RedisUrl = fmt.Sprintf("%s:%d", redisHost, redisPort)
 	settings.RedisPrefix = redisPrefix
 
 	router.HandleFunc("/api/v1/url", ApiAddHandler).Methods("POST").Name("add")
