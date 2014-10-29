@@ -246,18 +246,7 @@ func main() {
 
 	regex = fmt.Sprintf(regex, settings.UrlLength)
 
-  url, err := url.Parse(redisUrl)
-	if err != nil {
-		panic(err)
-	}
-
-  if url.User != nil {
-    settings.RedisUrl = fmt.Sprintf("%s@%s", url.User, url.Host)
-  } else {
-    settings.RedisUrl = url.Host
-  }
-
-	// settings.RedisUrl = fmt.Sprintf("%s:%d", redisHost, redisPort)
+  settings.RedisUrl = redisUrl
 	settings.RedisPrefix = redisPrefix
 
 	router.HandleFunc("/api/v1/url", ApiAddHandler).Methods("POST").Name("add")

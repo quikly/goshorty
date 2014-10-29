@@ -53,10 +53,22 @@ func init() {
 		MaxIdle: 5,
 		IdleTimeout: 240 * time.Second,
 		Dial: func () (redis.Conn, error) {
-			c, err := redis.Dial("tcp", settings.RedisUrl)
+
+      url, err := url.Parse(settings.RedisUrl)
+    	if err != nil {
+    		return nil, err
+    	}
+
+			c, err := redis.Dial("tcp", url.Host)
 			if err != nil {
 				return nil, err
 			}
+
+      if url.User != nil {
+        p, _ := url.User.Password()
+        c.Send("AUTH", p)
+      }
+
 			return c, nil
 		},
 		TestOnBorrow: func(c redis.Conn, t time.Time) error {
